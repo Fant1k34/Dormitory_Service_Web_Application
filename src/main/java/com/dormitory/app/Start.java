@@ -41,49 +41,14 @@ public class Start {
         // TODO Тут надо проверить, какая у него группа безопасности
 
 
+        // Отображем блоки
+
+
         // Отображаем все новости
 
-        try {
-            if ((int) session.getAttribute("group_id") != 0) {
-                Business businessClass = new Business();
-                ArrayList<CommonNewsCreator> news = businessClass.putAllCommonNewsToCommonNewsCreator();
-                Collections.sort(news);
-                String toShow = "";
-
-                // Если не администратор, то тогда мы не видим будующие новости
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                // calNow - день сейчас
-                Calendar calNow = Calendar.getInstance();
-                calNow.setTime(dateFormat.parse(LocalDate.now().toString()));
-
-                for (CommonNewsCreator el : news) {
-                    // calendar - день новости
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(dateFormat.parse(el.getStrongText()));
-                    // Если calendar после calNow -> новость не отображается
-                    if (calendar.after(calNow)) {
-                        continue;
-                    }
-                    toShow += el.getText() + "\n";
-                }
-                // Передаём строку из новостей в newsText
-                model.addAttribute("newsText", toShow);
-                return "start";
-            }
-        }
-        catch (Exception e){
-            System.out.println("Что-то не так с датами: их форматом. Будут отображены все новости");
-        }
-
-        // Если администратор, то всё как обычно:
-        Business businessClass = new Business();
-        ArrayList<CommonNewsCreator> news = businessClass.putAllCommonNewsToCommonNewsCreator();
-        Collections.sort(news);
-        String toShow = "";
-
-        for (CommonNewsCreator el : news) {
-            toShow += el.getText() + "\n";
-        }
+        int group_id = (int) session.getAttribute("group_id");
+        // Определяем новости для каждой группы пользователей
+        String toShow = showNews(group_id);
         // Передаём строку из новостей в newsText
         model.addAttribute("newsText", toShow);
         return "start";
@@ -105,5 +70,42 @@ public class Start {
         session.setAttribute("group_id", person.getGroup_id());
         return "redirect:/";
     }
+
+
+
+    public static String showNews(int group_id){
+        ArrayList<CommonNewsCreator> news = Business.putAllCommonNewsToCommonNewsCreator();
+        Collections.sort(news);
+        String toShow = "";
+        try {
+            // Если не администратор, то тогда мы не видим будующие новости
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            // calNow - день сейчас
+            Calendar calNow = Calendar.getInstance();
+            calNow.setTime(dateFormat.parse(LocalDate.now().toString()));
+
+            for (CommonNewsCreator el : news) {
+                // calendar - день новости
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(dateFormat.parse(el.getStrongText()));
+                // Если calendar после calNow -> новость не отображается
+                // Если администратор, то всё как обычно:
+                if (calendar.after(calNow) && group_id != 0) {
+                    continue;
+                }
+                toShow += el.getText() + "\n";
+            }
+            // Возвращаем html - вставку
+            return toShow;
+        }
+        catch (Exception e){
+            System.out.println("Ошибка в парсинге дат! В новости указана неправильная дата");
+        }
+        for (CommonNewsCreator el : news) {
+            toShow += el.getText() + "\n";
+        }
+        return toShow;
+    }
+
 
 }

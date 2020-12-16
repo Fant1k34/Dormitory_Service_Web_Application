@@ -38,7 +38,7 @@ public class Business {
     }
 
 
-    public ArrayList<CommonNewsCreator> putAllCommonNewsToCommonNewsCreator(){
+    public static ArrayList<CommonNewsCreator> putAllCommonNewsToCommonNewsCreator(){
         ArrayList<CommonNewsCreator> answer = new ArrayList<>();
 
         try {

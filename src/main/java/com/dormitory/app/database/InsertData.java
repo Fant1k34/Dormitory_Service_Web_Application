@@ -17,7 +17,7 @@ public class InsertData {
             statement.setString(1,"Что-то в будущем");
             statement.setString(2,"И ещё важно!");
             statement.setInt(3, 1);
-            statement.setDate(4, Date.valueOf(LocalDate.of(2020, 12, 24)));
+            statement.setDate(4, Date.valueOf(LocalDate.of(2020, 12, 14)));
             statement.setInt(5, 1);
             statement.execute();
             statement.close();
