@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: user
@@ -80,7 +81,24 @@
         <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
                 <!-- Тут отображение общих новостей -->
                 <div class="accordion" id="accordionExample">
-                    ${newsText}
+                    <c:forEach var="el" items="${commonNews}">
+                        <div class="accordion-item">
+                                        <h2 class="accordion-header" id="${el.fid}" >
+                                           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${el.id}" aria-expanded="false" aria-controls="collapse${el.id}">
+                                               <span class="toTheLeft"> ${el.header} </span>
+                                            <c:forEach var="tag" items="${el.tags}">
+                            &#160; <span class="badge rounded-pill ${tag.tagColor} ${tag.tagTextColor}"> ${tag.tagText} </span>
+                                            </c:forEach>
+                                               &#160; <span class="badge rounded-pill bg-warning "> Ха-ха </span>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse${el.id}" class="accordion-collapse collapse" aria-labelledby="heading${el.id}" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                    <strong> ${el.strongText} </strong> <br> ${el.usualText}
+                                                </div>
+                                        </div>
+                                    </div>
+                    </c:forEach>
                 </div>
                 <!-- Тут отображение общих новостей -->
         </div>

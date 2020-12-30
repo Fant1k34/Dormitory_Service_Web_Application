@@ -4,6 +4,7 @@ import com.dormitory.app.database.Business;
 import com.dormitory.app.helpful.CommonNewsCreator;
 import com.dormitory.app.helpful.LoginAndPassword;
 import com.dormitory.app.helpful.PersonInfo;
+import com.dormitory.app.helpful.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,10 +48,13 @@ public class Start {
         // Отображаем все новости
 
         int group_id = (int) session.getAttribute("group_id");
+        addNewsCommonToModel(group_id, model);
         // Определяем новости для каждой группы пользователей
-        String toShow = showNews(group_id);
+        // String toShow = showNews(group_id);
         // Передаём строку из новостей в newsText
-        model.addAttribute("newsText", toShow);
+        // model.addAttribute("newsText", toShow);
+
+
         return "start";
 
     }
@@ -72,11 +76,11 @@ public class Start {
     }
 
 
-
-    public static String showNews(int group_id){
+    public static void addNewsCommonToModel(int group_id, Model model){
         ArrayList<CommonNewsCreator> news = Business.putAllCommonNewsToCommonNewsCreator();
+        news.stream().forEach(i -> System.out.println(i.tags));
         Collections.sort(news);
-        String toShow = "";
+        ArrayList<CommonNewsCreator> filteredNews = new ArrayList<>();
         try {
             // Если не администратор, то тогда мы не видим будующие новости
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -93,18 +97,73 @@ public class Start {
                 if (calendar.after(calNow) && group_id != 0) {
                     continue;
                 }
-                toShow += el.getText() + "\n";
+
+                // Если новость надо показывать - значит, добавляем идентификаторы
+
+                SimpleDateFormat dateFormatNew = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal1New = Calendar.getInstance();
+                cal1New.setTime(dateFormatNew.parse(el.getStrongText()));
+                cal1New.add(Calendar.DATE, 2);
+
+                Calendar calNowNew = Calendar.getInstance();
+                calNowNew.setTime(dateFormatNew.parse(LocalDate.now().toString()));
+
+                Calendar calendarNew = Calendar.getInstance();
+                calendarNew.setTime(dateFormatNew.parse(el.getStrongText()));
+
+
+                System.out.println("Ждём!!!");
+                if (calendarNew.after(calNowNew)){
+                    el.tags.add(new Tag("Запланировано"));
+                }
+                else {
+                    if (calNowNew.before(cal1New)) {
+                        el.tags.add(new Tag("Новое"));
+                    }
+                }
+
+                filteredNews.add(el);
             }
             // Возвращаем html - вставку
-            return toShow;
+            model.addAttribute("commonNews", filteredNews);
+            filteredNews.stream().map(i -> i.getTags()).forEach(System.out::println);
+            return;
         }
         catch (Exception e){
             System.out.println("Ошибка в парсинге дат! В новости указана неправильная дата");
         }
-        for (CommonNewsCreator el : news) {
-            toShow += el.getText() + "\n";
+
+        try {
+            for (CommonNewsCreator el : news) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(dateFormat.parse(el.getStrongText()));
+
+                SimpleDateFormat dateFormatNew = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal1New = Calendar.getInstance();
+                cal1New.setTime(dateFormatNew.parse(el.getStrongText()));
+                cal1New.add(Calendar.DATE, 2);
+
+                Calendar calNowNew = Calendar.getInstance();
+                calNowNew.setTime(dateFormatNew.parse(LocalDate.now().toString()));
+
+                Calendar calendarNew = Calendar.getInstance();
+                calendarNew.setTime(dateFormatNew.parse(el.getStrongText()));
+
+                if (calendarNew.after(calNowNew)) {
+                    el.tags.add(new Tag("Запланировано"));
+                } else {
+                    if (calNowNew.before(cal1New)) {
+                        el.tags.add(new Tag("Новое"));
+                    }
+                }
+            }
         }
-        return toShow;
+        catch (Exception e){}
+
+        filteredNews.addAll(news);
+        model.addAttribute("commonNews", filteredNews);
+        filteredNews.stream().map(i -> i.getTags()).forEach(System.out::println);
     }
 
 

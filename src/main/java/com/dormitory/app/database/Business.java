@@ -55,7 +55,7 @@ public class Business {
                 Date date = resultSet.getDate("date");
                 String tagText = resultSet.getString("tag_text");
 
-                CommonNewsCreator news = new CommonNewsCreator(id);
+                CommonNewsCreator news = new CommonNewsCreator();
                 news.setId(id);
                 news.setHeader(title);
                 news.setTagName(tagText);
