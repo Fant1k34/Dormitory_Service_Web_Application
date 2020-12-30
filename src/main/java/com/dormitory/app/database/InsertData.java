@@ -6,19 +6,15 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class InsertData {
-    static JDBCDriver driver = ServiceDatabase.driver;
-    static String url = ServiceDatabase.url;
-
     public static void insertToCommonNews(){
         try{
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO CommonNews (title, text, author_id, date, tag_id) VALUES (?, ?, ?, ?, ?)");
-            statement.setString(1,"Что-то в будущем");
-            statement.setString(2,"И ещё важно!");
+            statement.setString(1,"Начало семестра");
+            statement.setString(2,"Весенний семестр начинается завтра!");
             statement.setInt(3, 1);
-            statement.setDate(4, Date.valueOf(LocalDate.of(2020, 12, 30)));
-            statement.setInt(5, 1);
+            statement.setDate(4, Date.valueOf(LocalDate.of(2021, 2, 6)));
+            statement.setInt(5, 1); // тег
             statement.execute();
             statement.close();
             connection.close();
@@ -30,8 +26,7 @@ public class InsertData {
 
     public static void insertToTag(){
         try{
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO Tag VALUES (?, ?)");
             statement.setInt(1,2);
             statement.setString(2,"Стандартное");
@@ -47,8 +42,7 @@ public class InsertData {
 
     public static void showCommon(){
         try {
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM CommonNews");
@@ -77,7 +71,7 @@ public class InsertData {
 
 
     public static void main(String[] args) {
-        InsertData.insertToCommonNews();
+        // InsertData.insertToCommonNews();
         // InsertData.insertToTag();
         InsertData.showCommon();
         System.out.println("+++");

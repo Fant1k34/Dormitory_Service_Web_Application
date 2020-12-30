@@ -8,12 +8,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class Business {
-    static JDBCDriver driver = ServiceDatabase.driver;
-    static String url = ServiceDatabase.url;
     public static boolean checkLoginAndPassword(String loginIn, String passwordIn){
         try {
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT passw FROM User WHERE login = ?");
             statement.setString(1, loginIn);
             ResultSet resultSet = statement.executeQuery();
@@ -42,8 +39,7 @@ public class Business {
         ArrayList<CommonNewsCreator> answer = new ArrayList<>();
 
         try {
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT CN.*, T.tag_text FROM CommonNews AS CN JOIN Tag AS T ON CN.tag_id = T.tag_id");
@@ -73,8 +69,7 @@ public class Business {
     public static ArrayList<PersonInfo> putAllInfoToPeopleInfo(){
         ArrayList<PersonInfo> people = new ArrayList<>();
         try {
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM User");
@@ -110,8 +105,7 @@ public class Business {
     public static PersonInfo getPersonByLogin(String login){
         PersonInfo person = new PersonInfo();
         try {
-            DriverManager.registerDriver(driver);
-            Connection connection = DriverManager.getConnection(url);
+            Connection connection = SetConnection.getConnection();
 
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM User WHERE login = ?");
             statement.setString(1, login);

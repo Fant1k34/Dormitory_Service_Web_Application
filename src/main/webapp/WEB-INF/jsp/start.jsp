@@ -89,7 +89,6 @@
                                             <c:forEach var="tag" items="${el.tags}">
                             &#160; <span class="badge rounded-pill ${tag.tagColor} ${tag.tagTextColor}"> ${tag.tagText} </span>
                                             </c:forEach>
-                                               &#160; <span class="badge rounded-pill bg-warning "> Ха-ха </span>
                                             </button>
                                         </h2>
                                         <div id="collapse${el.id}" class="accordion-collapse collapse" aria-labelledby="heading${el.id}" data-bs-parent="#accordionExample">

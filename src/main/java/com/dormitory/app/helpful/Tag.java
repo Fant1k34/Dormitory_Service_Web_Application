@@ -19,6 +19,9 @@ public class Tag {
             TagColor = "bg-info";
             TagTextColor = "text-dark";
         }
+        if (tagText.equals("Стандартное")){
+            TagText = "";
+        }
     }
 
     public String getTagText() {

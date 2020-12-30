@@ -49,11 +49,6 @@ public class Start {
 
         int group_id = (int) session.getAttribute("group_id");
         addNewsCommonToModel(group_id, model);
-        // Определяем новости для каждой группы пользователей
-        // String toShow = showNews(group_id);
-        // Передаём строку из новостей в newsText
-        // model.addAttribute("newsText", toShow);
-
 
         return "start";
 
