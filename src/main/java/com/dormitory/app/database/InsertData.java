@@ -24,12 +24,32 @@ public class InsertData {
         }
     }
 
-    public static void insertToTag(){
+    public static void insertToTag(int id, String tagName){
         try{
             Connection connection = SetConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO Tag VALUES (?, ?)");
-            statement.setInt(1,2);
-            statement.setString(2,"Стандартное");
+            statement.setInt(1,id);
+            statement.setString(2,tagName);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+        }
+    }
+
+    public static void insertToMarket(String title, String text, int author_id, LocalDate date, String contact_info, int rating, int tag_id){
+        try {
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO MarketNews(title, text, author_id, date, contact_info, rating, tag_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            statement.setString(1, title);
+            statement.setString(2, text);
+            statement.setInt(3, author_id);
+            statement.setDate(4, Date.valueOf(date));
+            statement.setString(5, contact_info);
+            statement.setInt(6, rating);
+            statement.setInt(7, tag_id);
             statement.execute();
             statement.close();
             connection.close();
@@ -72,7 +92,8 @@ public class InsertData {
 
     public static void main(String[] args) {
         // InsertData.insertToCommonNews();
-        // InsertData.insertToTag();
+        // InsertData.insertToTag(4, "Услуга");
+        // InsertData.insertToMarket("Печатаю лабы", "Две лабы печатаю - третья в подарок* <br> * - Третья лабораторная - самая короткая", 1, LocalDate.of(2020, 12, 6), "803б", 14, 4);
         InsertData.showCommon();
         System.out.println("+++");
     }

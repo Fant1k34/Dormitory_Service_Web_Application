@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: user
@@ -20,6 +21,32 @@
         .navbar{
             height: 50px !important;
         }
+        #v-pills-tabContent {
+            width: 80pc !important;
+        }
+        #v-pills-tab {
+            width: 20pc !important;
+        }
+        .d-flex align-items-start {
+            width: 100pc !important;
+        }
+        .card-img-top {
+            width: 55%; /* Ширина */
+            float: left; /* Выстраиваем элементы по горизонтали */
+            margin: 0 0 0 3.5%; /* Отступ слева */
+            background: #f0f0f0; /* Цвет фона */
+            border-radius: 5px; /* Радиус скругления */
+            padding: 2%; /* Поля */
+        }
+        .myclass1:hover {
+            color: rgb(0,0,255);
+        }
+        .myclass2:hover {
+            color: rgb(255,0,0);
+        }
+        .myclass3:hover {
+            color: rgb(0,255,0);
+        }
     </style>
 </head>
 <body>
@@ -29,13 +56,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-0 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Стена</a>
+                    <a class="nav-link" aria-current="page" href="/">Стена</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Маркет</a>
+                    <a class="nav-link active" href="/market">Маркет</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Управленчество</a>
+                    <a class="nav-link" href="/service">Управленчество</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -69,43 +96,30 @@
     </div>
     <div class="tab-content" id="v-pills-tabContent">
         <!-- Тут отображение общих новостей -->
-        <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="row row-cols-1 row-cols-md-2 g-${marketNews.size()}">
+        <c:forEach var="el" items="${marketNews}" varStatus="сounter">
             <div class="col">
                 <div class="card">
-                    <img src="1.jpg" class="card-img-top" alt="...">
+                    <div>
+                    <img src="${сounter.count}.jpg" class="card-img-top" alt="${el.title}" align="middle">
+                        <div class="card" style="width: 16.225pc;">
+                            <div class="card-header">
+                                <a class="myclass3" href="/market/items/{${el.}}"> Посмотреть подробнее </a>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">${el.date_mark}</li>
+                                <li class="list-group-item">${el.author}</li>
+                                <li class="list-group-item myclass1">Рейтинг: ${el.rating}</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <h5 class="card-title">${el.title}</h5>
+                        <p class="card-text">${el.text_mark}</p>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card">
-                    <img src="2.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <img src="3.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <img src="4.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    </div>
-                </div>
-            </div>
+        </c:forEach>
         </div>
         <!-- Тут отображение общих новостей -->
     </div>

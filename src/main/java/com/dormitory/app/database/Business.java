@@ -1,8 +1,8 @@
 package com.dormitory.app.database;
 
 import com.dormitory.app.helpful.CommonNewsCreator;
+import com.dormitory.app.helpful.MarketNewsCreator;
 import com.dormitory.app.helpful.PersonInfo;
-import org.hsqldb.jdbc.JDBCDriver;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -134,5 +134,30 @@ public class Business {
         }
         catch (Exception e){}
         return person;
+    }
+
+    public static ArrayList<MarketNewsCreator> putAllNewsToMarketNewsCreator(){
+        ArrayList<MarketNewsCreator> allMarketNews = new ArrayList<>();
+        try {
+            Connection connection = SetConnection.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM MarketNews");
+            while (resultSet.next()){
+                MarketNewsCreator marketNewsCreator = new MarketNewsCreator();
+
+                marketNewsCreator.setTitle(resultSet.getString("title"));
+                marketNewsCreator.setText_mark(resultSet.getString("text"));
+                marketNewsCreator.setAuthor(resultSet.getInt("author_id"));
+                marketNewsCreator.setDate_mark(String.valueOf(resultSet.getDate("date")));
+                marketNewsCreator.setContact_info(resultSet.getString("contact_info"));
+                marketNewsCreator.setRating(resultSet.getInt("rating"));
+
+                allMarketNews.add(marketNewsCreator);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return allMarketNews;
     }
 }
