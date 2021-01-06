@@ -1,8 +1,10 @@
 package com.dormitory.app.helpful;
 
+import com.dormitory.app.SortFlagForMarket;
 import com.dormitory.app.database.SetConnection;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -10,19 +12,37 @@ public class MarketNewsCreator implements Comparable<MarketNewsCreator>{
     private String title;
     private String text_mark;
     private String author;
+    private boolean liked;
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
 
     private String date_mark;
     private int rating;
     private int tag_id_mark;
     private String contact_info;
+    private SortFlagForMarket sortFlagForMarket;
 
-    private int mark_id;
+    public SortFlagForMarket getSortFlagForMarket() {
+        return sortFlagForMarket;
+    }
 
-    public int getMark_id() {
+    public void setSortFlagForMarket(SortFlagForMarket sortFlagForMarket) {
+        this.sortFlagForMarket = sortFlagForMarket;
+    }
+
+    private String mark_id;
+
+    public String getMark_id() {
         return mark_id;
     }
 
-    public void setMark_id(int mark_id) {
+    public void setMark_id(String mark_id) {
         this.mark_id = mark_id;
     }
 
@@ -98,9 +118,29 @@ public class MarketNewsCreator implements Comparable<MarketNewsCreator>{
 
     @Override
     public int compareTo(MarketNewsCreator o) {
-        if (o.getRating() < this.getRating()){
-            return -1;
+        if (sortFlagForMarket == SortFlagForMarket.RATING) {
+            if (o.getRating() < this.getRating()) {
+                return -1;
+            } else return 1;
         }
-        else return 1;
+        if (sortFlagForMarket == SortFlagForMarket.DATE) {
+            if (Date.valueOf(this.date_mark).after(Date.valueOf(o.date_mark))){
+                return -1;
+            }
+            else return 1;
+        }
+        if (sortFlagForMarket == SortFlagForMarket.NAME) {
+            String name1 = this.title;
+            String name2 = o.title;
+            for (int i = 0; i < Math.min(name1.length(), name2.length()); i++){
+                if ((int) name1.toCharArray()[i] < (int) name2.toCharArray()[i]){
+                    return -1;
+                }
+                if ((int) name1.toCharArray()[i] > (int) name2.toCharArray()[i]){
+                    return 1;
+                }
+            }
+        }
+        return 0;
     }
 }

@@ -31,7 +31,7 @@
             width: 100pc !important;
         }
         .card-img-top {
-            width: 55%; /* Ширина */
+            width: 50%; /* Ширина */
             float: left; /* Выстраиваем элементы по горизонтали */
             margin: 0 0 0 3.5%; /* Отступ слева */
             background: #f0f0f0; /* Цвет фона */
@@ -47,10 +47,68 @@
         .myclass3:hover {
             color: rgb(0,255,0);
         }
+
+
+        *{transition: all 0.3s linear;}
+
+        .myclass4 {
+            text-align: center;
+        }
+
+        .hidden{
+            font-size: 0;
+        }
+
+        .like{
+            font-family: 'Open Sans', serif;
+        }
+
+        .like-toggle{
+            outline:none;
+            box-shadow:none;
+            border: none;
+            width: 40px;
+            height: 30px;
+            font-size: 1.3em;
+            border-radius: 100px;
+        }
+
+
+
+        .like-toggle.basic3{
+            border: none;
+            width: 30px;
+            height: 30px;
+            font-size: 1.3em;
+            border-radius: 100px;
+            background: #438CCA;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .like-active.basic3{
+            background: #7CC576;
+            transform: rotate(-360deg);
+        }
+
+        .like-toggle.basic3:not(.like-active):hover{
+            background: #F26C4F;
+            transform: rotate(90deg);
+        }
+
+        .myclass5 {
+            background: #F26C4F !important;
+        }
+
+
     </style>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
+    function Liked(){
+        location.replace("/market/liked?newid=1")
+    }
+</script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -89,27 +147,45 @@
 </nav>
 <div class="d-flex align-items-start">
     <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
-        <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a>
-        <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a>
-        <a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
+        <input type="button" class='nav-link' id="v-pills-home-tab" value="Rating" onClick='location.href="/sortByRating"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+<%--        <a class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="/sortByRating" role="tab" aria-controls="v-pills-home" aria-selected="true">Rating</a>--%>
+        <input type="button" class='nav-link' id="v-pills-profile-tab" value="Date" onClick='location.href="/sortByDate"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+<%--        <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="/sortByDate" role="tab" aria-controls="v-pills-profile" aria-selected="false">Date</a>--%>
+        <input type="button" class='nav-link' id="v-pills-messages-tab" value="Name" onClick='location.href="/sortByName"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+<%--        <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" href="/sortByName" role="tab" aria-controls="v-pills-messages" aria-selected="false">Name</a>--%>
+        <input type="button" class='nav-link ${isLikeButtonActive}' id="v-pills-settings-tab" value="Liked" onClick='location.href="/sortByLiked"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+<%--        <a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>--%>
     </div>
     <div class="tab-content" id="v-pills-tabContent">
         <!-- Тут отображение общих новостей -->
         <div class="row row-cols-1 row-cols-md-2 g-${marketNews.size()}">
         <c:forEach var="el" items="${marketNews}" varStatus="сounter">
-            <div class="col">
                 <div class="card">
                     <div>
                     <img src="${сounter.count}.jpg" class="card-img-top" alt="${el.title}" align="middle">
                         <div class="card" style="width: 16.225pc;">
                             <div class="card-header">
-                                <a class="myclass3" href="/market/items/{${el.}}"> Посмотреть подробнее </a>
+                                <a class="myclass3" href="/market/items/{${el.mark_id}}"> Посмотреть подробнее </a>
                             </div>
-                            <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush myclass4">
                                 <li class="list-group-item">${el.date_mark}</li>
                                 <li class="list-group-item">${el.author}</li>
-                                <li class="list-group-item myclass1">Рейтинг: ${el.rating}</li>
+                                <c:if test="${el.liked == false}">
+                                    <li class="list-group-item myclass1">Рейтинг: ${el.rating}</li>
+                                </c:if>
+                                <c:if test="${el.liked == true}">
+                                    <li class="list-group-item myclass2">Рейтинг: ${el.rating}</li>
+                                </c:if>
+                                <li class="list-group-item like">
+                                    <c:if test="${el.liked == false}">
+                                    <input type="button" class='like-toggle basic3' value="♥" onClick='location.href="/market/liked?newid=${el.mark_id}"'>
+                                    Добавить в избранное
+                                    </c:if>
+                                    <c:if test="${el.liked == true}">
+                                        <input type="button" class='like-toggle basic3 myclass5' value="♥" onClick='location.href="/market/liked?newid=${el.mark_id}"'>
+                                        Удалить из избранного
+                                    </c:if>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -118,8 +194,8 @@
                         <p class="card-text">${el.text_mark}</p>
                     </div>
                 </div>
-            </div>
         </c:forEach>
+        </div>
         </div>
         <!-- Тут отображение общих новостей -->
     </div>

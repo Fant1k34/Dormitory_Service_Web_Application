@@ -51,7 +51,7 @@ public class Start {
         addNewsCommonToModel(group_id, model);
 
         return "start";
-
+        // return "test2";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

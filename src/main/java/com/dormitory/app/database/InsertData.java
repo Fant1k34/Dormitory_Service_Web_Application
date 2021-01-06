@@ -89,6 +89,23 @@ public class InsertData {
     }
 
 
+    public static void putPictureToDBRelatedToNewById(int id, byte[] bytes){
+        try {
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO PictureMarket(new_mar_id, picture) VALUES(?, ?)");
+            statement.setInt(1, id);
+            statement.setBytes(2, bytes);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Ошибка в вставке");
+        }
+    }
+
+
 
     public static void main(String[] args) {
         // InsertData.insertToCommonNews();

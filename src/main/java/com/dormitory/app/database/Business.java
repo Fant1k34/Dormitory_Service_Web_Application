@@ -1,11 +1,15 @@
 package com.dormitory.app.database;
 
+import com.dormitory.app.SortFlagForMarket;
 import com.dormitory.app.helpful.CommonNewsCreator;
 import com.dormitory.app.helpful.MarketNewsCreator;
 import com.dormitory.app.helpful.PersonInfo;
+import com.dormitory.app.helpful.PictureMarket;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Business {
     public static boolean checkLoginAndPassword(String loginIn, String passwordIn){
@@ -136,7 +140,7 @@ public class Business {
         return person;
     }
 
-    public static ArrayList<MarketNewsCreator> putAllNewsToMarketNewsCreator(){
+    public static ArrayList<MarketNewsCreator> putAllNewsToMarketNewsCreator(SortFlagForMarket sortFlagForMarket, String login){
         ArrayList<MarketNewsCreator> allMarketNews = new ArrayList<>();
         try {
             Connection connection = SetConnection.getConnection();
@@ -151,6 +155,32 @@ public class Business {
                 marketNewsCreator.setDate_mark(String.valueOf(resultSet.getDate("date")));
                 marketNewsCreator.setContact_info(resultSet.getString("contact_info"));
                 marketNewsCreator.setRating(resultSet.getInt("rating"));
+                marketNewsCreator.setMark_id(String.valueOf(resultSet.getInt("new_mar_id")));
+
+                marketNewsCreator.setSortFlagForMarket(sortFlagForMarket);
+
+                Connection connection1 = SetConnection.getConnection();
+                PreparedStatement statement1 = connection1.prepareStatement("SELECT COUNT(*) FROM Liked WHERE new_mar_id = ?");
+                statement1.setInt(1, Integer.parseInt(marketNewsCreator.getMark_id()));
+                ResultSet resultSet1 = statement1.executeQuery();
+                resultSet1.next();
+                marketNewsCreator.setRating(resultSet1.getInt(1));
+
+                Connection connection2 = SetConnection.getConnection();
+                PreparedStatement statement2 = connection2.prepareStatement("SELECT * FROM Liked AS L WHERE new_mar_id = ? AND L.user_id = (SELECT user_id from User WHERE login = ?)");
+                statement2.setInt(1, Integer.parseInt(marketNewsCreator.getMark_id()));
+                statement2.setString(2, login);
+                ResultSet resultSet2 = statement2.executeQuery();
+                int counterLiked = 0;
+                while (resultSet2.next()){
+                    counterLiked++;
+                }
+                if (counterLiked == 1){
+                    marketNewsCreator.setLiked(true);
+                }
+                else {
+                    marketNewsCreator.setLiked(false);
+                }
 
                 allMarketNews.add(marketNewsCreator);
             }
@@ -160,4 +190,36 @@ public class Business {
         }
         return allMarketNews;
     }
+
+    public static ArrayList<PictureMarket> getAllPicturesFromDBById(int id){
+        ArrayList<PictureMarket> allPictures = new ArrayList<>();
+
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM PictureMarket WHERE new_mar_id = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                byte[] picturesBytes = resultSet.getBytes("picture");
+                int idMar = resultSet.getInt("new_mar_id");
+                int idNew = resultSet.getInt("picture_id");
+
+                PictureMarket pictureMarket = new PictureMarket();
+                pictureMarket.setBytes(picturesBytes);
+                pictureMarket.setIdMark(idMar);
+                pictureMarket.setIdMark(idNew);
+
+                allPictures.add(pictureMarket);
+            }
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Что-то не так с работой BLOB");
+        }
+
+        return allPictures;
+    }
+
 }
