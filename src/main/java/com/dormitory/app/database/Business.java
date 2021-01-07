@@ -159,15 +159,13 @@ public class Business {
 
                 marketNewsCreator.setSortFlagForMarket(sortFlagForMarket);
 
-                Connection connection1 = SetConnection.getConnection();
-                PreparedStatement statement1 = connection1.prepareStatement("SELECT COUNT(*) FROM Liked WHERE new_mar_id = ?");
+                PreparedStatement statement1 = connection.prepareStatement("SELECT COUNT(*) FROM Liked WHERE new_mar_id = ?");
                 statement1.setInt(1, Integer.parseInt(marketNewsCreator.getMark_id()));
                 ResultSet resultSet1 = statement1.executeQuery();
                 resultSet1.next();
                 marketNewsCreator.setRating(resultSet1.getInt(1));
 
-                Connection connection2 = SetConnection.getConnection();
-                PreparedStatement statement2 = connection2.prepareStatement("SELECT * FROM Liked AS L WHERE new_mar_id = ? AND L.user_id = (SELECT user_id from User WHERE login = ?)");
+                PreparedStatement statement2 = connection.prepareStatement("SELECT * FROM Liked AS L WHERE new_mar_id = ? AND L.user_id = (SELECT user_id from User WHERE login = ?)");
                 statement2.setInt(1, Integer.parseInt(marketNewsCreator.getMark_id()));
                 statement2.setString(2, login);
                 ResultSet resultSet2 = statement2.executeQuery();

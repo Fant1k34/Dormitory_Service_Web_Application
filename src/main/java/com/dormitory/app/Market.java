@@ -2,9 +2,12 @@ package com.dormitory.app;
 
 import com.dormitory.app.database.Business;
 import com.dormitory.app.database.SetConnection;
+import com.dormitory.app.helpful.FindProperly;
 import com.dormitory.app.helpful.MarketNewsCreator;
+import com.dormitory.app.helpful.alhoritms.forMarketClass;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -21,39 +24,51 @@ public class Market {
                              HttpSession session){
         if (session.getAttribute("login") == null){
             session.setAttribute("isLikeButtonActive", false);
+            session.setAttribute("search", "");
+            // model.addAttribute("search", new FindProperly(""));
             return "redirect:/";
         }
         String login = (String) session.getAttribute("login");
         boolean liked = (boolean) session.getAttribute("isLikeButtonActive");
 
         if (sort.equals("date")) {
-            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.DATE, login, liked));
+            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.DATE, login, liked, (String) session.getAttribute("search")));
         }
         if (sort.equals("name")) {
-            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.NAME, login, liked));
+            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.NAME, login, liked, (String) session.getAttribute("search")));
         }
         if (sort.equals("rating")) {
-            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.RATING, login, liked));
+            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.RATING, login, liked, (String) session.getAttribute("search")));
         }
 
+        model.addAttribute("sortType", sort);
+
         if (liked){
-            model.addAttribute("isLikeButtonActive", "active");
+            model.addAttribute("isLikeButtonActive", true);
         }
         else {
-            model.addAttribute("isLikeButtonActive", "");
+            model.addAttribute("isLikeButtonActive", false);
         }
+
+        model.addAttribute("prevSearch", (String) session.getAttribute("search"));
+        model.addAttribute("search", new FindProperly());
         return "market";
     }
 
-    public static ArrayList<MarketNewsCreator> putAllNewsToModel(SortFlagForMarket sortFlagForMarket, String login, boolean sortByLiked){
+    public static ArrayList<MarketNewsCreator> putAllNewsToModel(SortFlagForMarket sortFlagForMarket, String login, boolean sortByLiked, String word){
         ArrayList<MarketNewsCreator> marketNewsCreatorArrayList = Business.putAllNewsToMarketNewsCreator(sortFlagForMarket, login);
         Collections.sort(marketNewsCreatorArrayList);
 
-        ArrayList<MarketNewsCreator> answerForSortByLike = new ArrayList<>();
-        marketNewsCreatorArrayList.stream().filter(MarketNewsCreator::isLiked).forEach(answerForSortByLike::add);
+        ArrayList<MarketNewsCreator> answerForSortByLikeAndSearch = new ArrayList<>();
 
-        if (sortByLiked) return answerForSortByLike;
-        return marketNewsCreatorArrayList;
+        if (sortByLiked) {
+            marketNewsCreatorArrayList.stream().filter(MarketNewsCreator::isLiked).filter(i -> forMarketClass.filterBySearch(i, word)).forEach(answerForSortByLikeAndSearch::add);
+        }
+        else {
+            marketNewsCreatorArrayList.stream().filter(i -> forMarketClass.filterBySearch(i, word)).forEach(answerForSortByLikeAndSearch::add);
+        }
+
+        return answerForSortByLikeAndSearch;
     }
 
     @RequestMapping("/market/liked")
@@ -100,6 +115,7 @@ public class Market {
         }
         catch (Exception e)
             {e.printStackTrace();}
+
         return "redirect:/market";
     }
 
@@ -108,5 +124,26 @@ public class Market {
         boolean liked = (boolean) session.getAttribute("isLikeButtonActive");
         session.setAttribute("isLikeButtonActive", !liked);
         return "redirect:/market";
+    }
+
+
+    @RequestMapping(value = "/market", method = RequestMethod.POST)
+    public String marketPagePost(Model model, @RequestParam(value = "sort", defaultValue = "rating") String sort,
+                             HttpSession session, @ModelAttribute("search") FindProperly findProperly) {
+        System.out.println(findProperly.getSubsequence());
+        session.setAttribute("search", findProperly.getSubsequence());
+        return "redirect:/market";
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String test(Model model, HttpSession session) {
+        model.addAttribute("search", new FindProperly());
+        return "test3";
+    }
+
+    @RequestMapping(value = "test", method = RequestMethod.POST)
+    public String test2(@ModelAttribute("search") FindProperly findProperly, BindingResult result, Model model){
+        System.out.println(findProperly.getSubsequence());
+        return "test3";
     }
 }

@@ -24,8 +24,10 @@ public class Start {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String indexG(Model model, HttpSession session) {
         // Если пользователь не вошёл (нет сессии)
-        if (session.getAttribute("successLogin") == null){
-            model.addAttribute("message", "Требуется авторизация");
+        if (session.getAttribute("login") == null){
+            session.setAttribute("isLikeButtonActive", false);
+            session.setAttribute("search", "");
+            // model.addAttribute("search", new FindProperly(""));
             return "login";
         }
 
