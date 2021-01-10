@@ -57,7 +57,7 @@
         </div>
 
         <div class="input-group mb-3">
-            <span class="input-group-text">Персональная информация: номер блока</span>
+            <span class="input-group-text">Персональная информация: ссылка на соц. сеть</span>
             <form:input path="contactInfoForMarketSimpleFromFormGetter" type="text" class="form-control" placeholder="100а" aria-label="Amount (to the nearest dollar)"/> <!-- bind to user.name-->
             <form:errors path="contactInfoForMarketSimpleFromFormGetter"/>
         </div>

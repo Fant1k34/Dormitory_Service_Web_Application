@@ -1,5 +1,6 @@
 package com.dormitory.app.database;
 
+import com.dormitory.app.helpful.CommonNewsCreator;
 import com.dormitory.app.helpful.MarketNewsCreator;
 import org.hsqldb.jdbc.JDBCDriver;
 
@@ -7,15 +8,15 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class InsertData {
-    public static void insertToCommonNews(){
+    public static void insertToCommonNews(String title, String text, int author_id, LocalDate date, int tag_id){
         try{
             Connection connection = SetConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO CommonNews (title, text, author_id, date, tag_id) VALUES (?, ?, ?, ?, ?)");
-            statement.setString(1,"Начало семестра");
-            statement.setString(2,"Весенний семестр начинается завтра!");
-            statement.setInt(3, 1);
-            statement.setDate(4, Date.valueOf(LocalDate.of(2021, 2, 6)));
-            statement.setInt(5, 1); // тег
+            statement.setString(1,title);
+            statement.setString(2,text);
+            statement.setInt(3, author_id);
+            statement.setDate(4, Date.valueOf(date));
+            statement.setInt(5, tag_id); // тег
             statement.execute();
             statement.close();
             connection.close();

@@ -72,11 +72,29 @@
 </nav>
 <div class="d-flex align-items-start">
     <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Новости</a>
-        <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Редактирование</a>
-        <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a>
-        <a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
-    </div>
+        <c:if test="${toShow == 'News'}">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-home-tab" value="Новости" onClick='location.href="/showсommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+        <c:if test="${toShow != 'News'}">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-home-tab" value="Новости" onClick='location.href="/showсommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+
+        <c:if test="${toShow == 'Adding'}">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-profile-tab" value="Добавить новость" onClick='location.href="/addcommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+        <c:if test="${toShow != 'Adding'}">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-profile-tab" value="Добавить новость" onClick='location.href="/addcommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+
+        <c:if test="${toShow == 'Editing'}">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-messages-tab" value="Удалить/изменить новость" onClick='location.href="/editсommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+        <c:if test="${toShow != 'Editing'}">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-messages-tab" value="Удалить/изменить новость" onClick='location.href="/editсommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+
+        </div>
+    <c:if test="${toShow == 'News'}">
     <div class="tab-content" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
                 <!-- Тут отображение общих новостей -->
@@ -106,6 +124,59 @@
         <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
         <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
     </div>
+    </c:if>
+    <c:if test="${toShow == 'Adding'}">
+
+        <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+        <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+
+        <form:form method="post" modelAttribute="addingAtt" action="/addcommon">
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Заголовок объявления</span>
+                <form:input path="header" type="text" class="form-control" placeholder="А я заголовок. Не забудь про меня" aria-label="Username" aria-describedby="basic-addon1"/> <!-- bind to user.name-->
+                <form:errors path="header"/>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">Текст объявления</span>
+                <form:textarea path="usualText" class="form-control" placeholder="Это текст объявления, я очень важен! Необходимо меня прочитать всем!" aria-label="With textarea"/> <!-- bind to user.name-->
+                <form:errors path="usualText"/>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon2">Выбор даты создания объявления</span>
+                <form:input path="strongText" type="date" class="form-control"  aria-label="Recipient's username" aria-describedby="basic-addon2"/> <!-- bind to user.name-->
+                <form:errors path="strongText"/>
+
+            </div>
+
+
+                <form:select path="tagName" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                    <form:option value="Важно" itemLabel="name" itemValue="customerID"/>
+                    <form:option value="Стандартное" itemLabel="name" itemValue="customerID"/>
+                </form:select>
+                <form:errors path="tagName"/>
+
+
+
+<%--            <div class="input-group date" data-provide="datepicker">--%>
+<%--                <input type="text" class="form-control">--%>
+<%--                <form:textarea path="usualText" class="form-control" placeholder="Это текст объявления, я очень важен! Необходимо меня прочитать всем!" aria-label="With textarea"/> <!-- bind to user.name-->--%>
+<%--                <form:errors path="usualText"/>--%>
+<%--                <div class="input-group-addon">--%>
+<%--                    <span class="glyphicon glyphicon-th"></span>--%>
+<%--                </div>--%>
+<%--            </div>--%>
+
+            <input type="submit" src="/addcommon" class="btn btn-primary" value="Добавить объявление">
+
+
+
+        </form:form>
+    </c:if>
 </div>
 </body>
 </html>

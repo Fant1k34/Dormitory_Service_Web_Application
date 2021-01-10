@@ -338,4 +338,21 @@ public class Business {
         return answer;
     }
 
+    public static int getTagIdByName(String name){
+        int answer = -10;
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT tag_id FROM Tag WHERE tag_text = ?");
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            answer = resultSet.getInt(1);
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return answer;
+    }
+
 }

@@ -27,6 +27,7 @@ public class Start {
         if (session.getAttribute("login") == null){
             session.setAttribute("isLikeButtonActive", false);
             session.setAttribute("search", "");
+            session.setAttribute("toShow", "News");
 
             // model.addAttribute("search", new FindProperly(""));
             model.addAttribute("toLogIn", new LoginAndPassword());
@@ -54,8 +55,19 @@ public class Start {
         int group_id = (int) session.getAttribute("group_id");
         addNewsCommonToModel(group_id, model);
 
+        model.addAttribute("toShow", (String) session.getAttribute("toShow"));
+
+        if (((String) session.getAttribute("toShow")).equals("News")){
+            return "start";
+        }
+        if (((String) session.getAttribute("toShow")).equals("Adding")){
+            model.addAttribute("addingAtt", new CommonNewsCreator());
+        }
+        if (((String) session.getAttribute("toShow")).equals("Editing")){
+            model.addAttribute("editingAtt", new CommonNewsCreator());
+        }
+
         return "start";
-        // return "test2";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
