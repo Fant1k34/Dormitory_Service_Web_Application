@@ -27,15 +27,17 @@ public class Start {
         if (session.getAttribute("login") == null){
             session.setAttribute("isLikeButtonActive", false);
             session.setAttribute("search", "");
+
             // model.addAttribute("search", new FindProperly(""));
-            return "login";
+            model.addAttribute("toLogIn", new LoginAndPassword());
+            return "loginnew";
         }
 
         boolean result = (boolean) session.getAttribute("successLogin");
         if (!result){
             // Если пароль или логин введены неверно
-            model.addAttribute("message", "Неверно введены логин и пароль");
-            return "login";
+            // model.addAttribute("message", "Неверно введены логин и пароль");
+            return "loginnew";
         }
         // Если у пользователя вверно введены логин и пароль
         String log = (String) session.getAttribute("login");
@@ -60,12 +62,20 @@ public class Start {
     // Это метод POST, который принимает @ModelAttribute произвольного класса, который заполняется
     // автоматически в форме, html код которой содержит поля этого класса
     // Все такие классы лежат в пакете helpful
-    public String indexP(Model model, HttpSession session, @ModelAttribute LoginAndPassword loginAndPassword) throws IOException {
+    public String indexP(Model model, HttpSession session, @ModelAttribute("toLogIn") LoginAndPassword loginAndPassword) throws IOException {
         boolean successLogin = Business.checkLoginAndPassword(loginAndPassword.getLogin(), loginAndPassword.getPassw());
         session.setMaxInactiveInterval(360);
         session.setAttribute("successLogin", successLogin);
         session.setAttribute("login", loginAndPassword.getLogin());
 
+        if (!successLogin){
+            session.setAttribute("isLikeButtonActive", false);
+            session.setAttribute("search", "");
+
+            // model.addAttribute("search", new FindProperly(""));
+            model.addAttribute("toLogIn", new LoginAndPassword());
+            return "loginnew";
+        }
         PersonInfo person = Business.getPersonByLogin(loginAndPassword.getLogin());
 
         session.setAttribute("group_id", person.getGroup_id());

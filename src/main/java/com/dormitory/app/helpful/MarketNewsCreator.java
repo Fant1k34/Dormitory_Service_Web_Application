@@ -13,6 +13,24 @@ public class MarketNewsCreator implements Comparable<MarketNewsCreator>{
     private String text_mark;
     private String author;
     private boolean liked;
+    private int authorId;
+    private String imageId;
+
+    public String getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
 
     public boolean isLiked() {
         return liked;
@@ -83,6 +101,7 @@ public class MarketNewsCreator implements Comparable<MarketNewsCreator>{
     }
 
     public void setAuthor(int author_id) {
+        setAuthorId(author_id);
         this.author = null;
         try {
             Connection connection = SetConnection.getConnection();

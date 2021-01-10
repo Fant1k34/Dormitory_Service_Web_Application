@@ -1,5 +1,6 @@
 package com.dormitory.app.database;
 
+import com.dormitory.app.helpful.MarketNewsCreator;
 import org.hsqldb.jdbc.JDBCDriver;
 
 import java.sql.*;
@@ -39,7 +40,20 @@ public class InsertData {
         }
     }
 
-    public static void insertToMarket(String title, String text, int author_id, LocalDate date, String contact_info, int rating, int tag_id){
+    public static String insertToMarket(MarketNewsCreator marketNewsCreator){
+        String title = marketNewsCreator.getTitle();
+        String text = marketNewsCreator.getText_mark();
+        int author_id = marketNewsCreator.getAuthorId();
+        LocalDate date = LocalDate.parse(marketNewsCreator.getDate_mark());
+        String contact_info = marketNewsCreator.getContact_info();
+        int rating = marketNewsCreator.getRating();
+        int tag_id = marketNewsCreator.getTag_id_mark();
+        return insertToMarket(title, text, author_id, date, contact_info, rating, tag_id);
+    }
+
+    public static String insertToMarket(String title, String text, int author_id, LocalDate date, String contact_info, int rating, int tag_id){
+        int id = -10;
+
         try {
             Connection connection = SetConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO MarketNews(title, text, author_id, date, contact_info, rating, tag_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -51,12 +65,21 @@ public class InsertData {
             statement.setInt(6, rating);
             statement.setInt(7, tag_id);
             statement.execute();
+
+            PreparedStatement statement2 = connection.prepareStatement("SELECT new_mar_id FROM MarketNews WHERE title = ? AND text = ?");
+            statement2.setString(1, title);
+            statement2.setString(2, text);
+            ResultSet resultSet = statement2.executeQuery();
+            resultSet.next();
+            id = resultSet.getInt(1);
+
             statement.close();
             connection.close();
         }
         catch (Exception e){
             System.out.println(e.toString());
         }
+        return String.valueOf(id);
     }
 
 
@@ -89,12 +112,14 @@ public class InsertData {
     }
 
 
-    public static void putPictureToDBRelatedToNewById(int id, byte[] bytes){
+    public static String putPictureToDBRelatedToNewById(int id, byte[] bytes){
+        int k = (int) (System.currentTimeMillis() / 1000);
         try {
             Connection connection = SetConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO PictureMarket(new_mar_id, picture) VALUES(?, ?)");
-            statement.setInt(1, id);
-            statement.setBytes(2, bytes);
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO PictureMarket(picture_id, new_mar_id, picture) VALUES(?, ?, ?)");
+            statement.setInt(1, k);
+            statement.setInt(2, id);
+            statement.setBytes(3, bytes);
             statement.execute();
             statement.close();
             connection.close();
@@ -103,6 +128,25 @@ public class InsertData {
             e.printStackTrace();
             System.out.println("Ошибка в вставке");
         }
+        return String.valueOf(k);
+    }
+
+    public static String putPictureToDBRelatedToNewById(int k, int id, byte[] bytes){
+        try {
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO PictureMarket(picture_id, new_mar_id, picture) VALUES(?, ?, ?)");
+            statement.setInt(1, k);
+            statement.setInt(2, id);
+            statement.setBytes(3, bytes);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Ошибка в вставке");
+        }
+        return String.valueOf(k);
     }
 
 

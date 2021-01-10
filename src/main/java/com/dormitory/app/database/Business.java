@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 public class Business {
@@ -205,7 +206,7 @@ public class Business {
                 PictureMarket pictureMarket = new PictureMarket();
                 pictureMarket.setBytes(picturesBytes);
                 pictureMarket.setIdMark(idMar);
-                pictureMarket.setIdMark(idNew);
+                pictureMarket.setIdPicture(idNew);
 
                 allPictures.add(pictureMarket);
             }
@@ -218,6 +219,123 @@ public class Business {
         }
 
         return allPictures;
+    }
+
+
+    public static PictureMarket getPictureFromDBByIdPicture(int id){
+        ArrayList<PictureMarket> allPictures = new ArrayList<>();
+
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM PictureMarket WHERE picture_id = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                byte[] picturesBytes = resultSet.getBytes("picture");
+                int idMar = resultSet.getInt("new_mar_id");
+                int idNew = resultSet.getInt("picture_id");
+
+                PictureMarket pictureMarket = new PictureMarket();
+                pictureMarket.setBytes(picturesBytes);
+                pictureMarket.setIdMark(idMar);
+                pictureMarket.setIdMark(idNew);
+
+                allPictures.add(pictureMarket);
+            }
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Что-то не так с работой BLOB");
+        }
+
+        return allPictures.get(0);
+    }
+
+
+    public static int getUserIdByLogin(String login){
+        int id = 2;
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT user_id FROM User WHERE login = ?");
+            statement.setString(1, login);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            id = resultSet.getInt(1);
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return id;
+    }
+
+
+    public static boolean deleteByMarketNewsID(int marketId, int group, String login){
+        boolean flag = true;
+        if (group == 0) {
+            try {
+                Connection connection = SetConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement("DELETE FROM MarketNews WHERE new_mar_id = ?");
+                statement.setInt(1, marketId);
+                statement.execute();
+                statement.close();
+                connection.close();
+            } catch (Exception e) {
+                flag = false;
+            }
+        }
+        else {
+            try {
+                Connection connection = SetConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement("DELETE FROM MarketNews WHERE new_mar_id = ? AND (SELECT user_id FROM User WHERE login = ?) = author_id");
+                statement.setInt(1, marketId);
+                statement.setString(2, login);
+                statement.execute();
+                statement.close();
+                connection.close();
+            } catch (Exception e) {
+                flag = false;
+            }
+        }
+        return flag;
+    }
+
+
+
+    public static ArrayList<String> showAuthorInfoByMarkId(int MarketId){
+        String contact_info = "";
+        String block_id = "";
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT contact_info, block_id FROM MarketNews JOIN User ON user_id = author_id WHERE new_mar_id = ?");
+            statement.setInt(1, MarketId);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            contact_info = resultSet.getString(1);
+            block_id = resultSet.getString(2);
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return new ArrayList<>(Arrays.asList(contact_info, block_id));
+    }
+
+    public static String getAuthorByMarketNews(int id){
+        String answer = "";
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT login FROM User WHERE user_id = (SELECT author_id FROM MarketNews WHERE new_mar_id = ?)");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            answer = resultSet.getString(1);
+        }
+        catch (Exception e){
+        }
+        return answer;
     }
 
 }

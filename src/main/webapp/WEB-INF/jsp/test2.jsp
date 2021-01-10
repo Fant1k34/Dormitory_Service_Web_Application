@@ -12,6 +12,6 @@
     <title>Title</title>
 </head>
 <body>
-<img th:src="@{${pictures.get(0).path}}" alt="((((((((((((((" />
+<img src="photos/${allImages.get(0).name}.jpg" alt="((((((((((((((" />
 </body>
 </html>

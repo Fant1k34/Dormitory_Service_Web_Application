@@ -57,22 +57,49 @@ public class MarketStuff {
 
 
     @RequestMapping(value = "/uploadImage")
-    @ResponseBody
-    public String uploadImage(@RequestParam("imageFile") MultipartFile multipartFile) throws IOException {
+    public String uploadImage(@RequestParam("imageFile") MultipartFile multipartFile, Model model, HttpSession session) throws IOException {
+        if (session.getAttribute("login") == null){
+            model.addAttribute("error", "Вы не вошли в систему");
+            return "error";
+        }
         String folder = "src/main/resources/static/";
         byte[] bytes = multipartFile.getBytes();
         // Path path = Paths.get(folder + multipartFile.getOriginalFilename());
         // Files.write(path, bytes);
 
-        InsertData.putPictureToDBRelatedToNewById(1, bytes);
-        Business.getAllPicturesFromDBById(1).stream().forEach(System.out::println);
-        return "Успех!";
+        // Метод определяет id картинки внутри
+        String pictureId = InsertData.putPictureToDBRelatedToNewById(-10, bytes);
+        //
+        // Business.getAllPicturesFromDBById(Integer.parseInt(pictureId)).stream().forEach(System.out::println);
+
+
+        folder = "/src/main/resources/static/photos/";
+        // picture id !!!
+        PictureMarket pictureMarket = Business.getPictureFromDBByIdPicture(Integer.parseInt(pictureId));
+
+        Path absolutePath = Paths.get(".").toAbsolutePath();
+        Path path = Paths.get( absolutePath + folder + pictureId + ".jpg");
+        pictureMarket.setPath(absolutePath + folder + pictureId + ".jpg");
+        pictureMarket.setName(pictureId);
+        System.out.println("Путь - " + path);
+        Files.write(path, pictureMarket.getBytes());
+
+
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("test2");
+//        modelAndView.addObject("pictures", allPicturesFromDBById);
+
+        return "redirect:/addMarketNews?pictureId=" + pictureId;
     }
 
 
     @RequestMapping(value = "/market/items/show/{id}", method = RequestMethod.GET)
-    public String getImageAsResponseEntity(Model model, HttpSession session) throws IOException {
+    public String getImageAsResponseEntity(Model model, HttpSession session, @PathVariable("id") int id) throws IOException {
         // model.addAttribute("imagePath1", "KK4Oq2VMtGQ.jpg");
+        model.addAttribute("pictureId", id);
+
+        ArrayList<PictureMarket> allPicturesFromDBById = Business.getAllPicturesFromDBById(id);
+        model.addAttribute("allImages", allPicturesFromDBById);
 
         return "test2";
     }

@@ -1,9 +1,11 @@
 package com.dormitory.app;
 
 import com.dormitory.app.database.Business;
+import com.dormitory.app.database.InsertData;
 import com.dormitory.app.database.SetConnection;
 import com.dormitory.app.helpful.FindProperly;
 import com.dormitory.app.helpful.MarketNewsCreator;
+import com.dormitory.app.helpful.PictureMarket;
 import com.dormitory.app.helpful.alhoritms.forMarketClass;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,6 +52,25 @@ public class Market {
             model.addAttribute("isLikeButtonActive", false);
         }
 
+        if (session.getAttribute("contactInfo") == null){
+            model.addAttribute("contactInfo", "");
+            model.addAttribute("blockId", "");
+        }
+        else {
+            String s1 = (String) session.getAttribute("contactInfo");
+            String s2 = (String) session.getAttribute("blockId");
+            System.out.println(s1);
+            System.out.println(s2);
+            model.addAttribute("contactInfo", s1);
+            model.addAttribute("blockId", s2);
+            // Обнуляем данные два аттрибута сессии
+            session.setAttribute("contactInfo", null);
+            session.setAttribute("blockId", null);
+
+        }
+
+        model.addAttribute("group_id", (int) session.getAttribute("group_id"));
+        model.addAttribute("login", (String) session.getAttribute("login"));
         model.addAttribute("prevSearch", (String) session.getAttribute("search"));
         model.addAttribute("search", new FindProperly());
         return "market";
@@ -57,6 +78,18 @@ public class Market {
 
     public static ArrayList<MarketNewsCreator> putAllNewsToModel(SortFlagForMarket sortFlagForMarket, String login, boolean sortByLiked, String word){
         ArrayList<MarketNewsCreator> marketNewsCreatorArrayList = Business.putAllNewsToMarketNewsCreator(sortFlagForMarket, login);
+
+        for (MarketNewsCreator marketNewsCreator : marketNewsCreatorArrayList) {
+            ArrayList<PictureMarket> allPicturesFromDBById = Business.getAllPicturesFromDBById(Integer.parseInt(marketNewsCreator.getMark_id()));
+            try {
+                marketNewsCreator.setImageId(String.valueOf(allPicturesFromDBById.get(0).getIdPicture()));
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
         Collections.sort(marketNewsCreatorArrayList);
 
         ArrayList<MarketNewsCreator> answerForSortByLikeAndSearch = new ArrayList<>();

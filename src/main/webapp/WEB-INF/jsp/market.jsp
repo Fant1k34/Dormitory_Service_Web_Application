@@ -21,15 +21,30 @@
         .navbar{
             height: 50px !important;
         }
-        #v-pills-tabContent {
-            width: 80pc !important;
+        /*#v-pills-tabContent {*/
+        /*    width: 78pc !important;*/
+        /*}*/
+        /*#v-pills-tab {*/
+        /*    width: 20pc !important;*/
+        /*}*/
+        /*.d-flex align-items-start {*/
+        /*    width: 98pc !important;*/
+        /*}*/
+
+        .align-items-start {
+            width: 96pc !important;
         }
+
         #v-pills-tab {
-            width: 20pc !important;
+            width: 16pc !important;
         }
-        .d-flex align-items-start {
-            width: 100pc !important;
+
+        #v-pills-tabContent {
+            width: 77pc !important;
         }
+
+
+
         .card-img-top {
             width: 50%; /* Ширина */
             float: left; /* Выстраиваем элементы по горизонтали */
@@ -100,6 +115,17 @@
             background: #F26C4F !important;
         }
 
+        .card {
+            width: 38.5pc;
+        }
+
+        #v-pills-tab {
+            width: 16pc !important;
+        }
+
+        #fullInfo {
+            width: 16pc !important;
+        }
 
     </style>
 </head>
@@ -110,7 +136,7 @@
     }
 </script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
+    <div class="container-fluid mymainclass">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-0 mb-lg-0">
                 <li class="nav-item">
@@ -191,17 +217,34 @@
             </div>
         </c:if>
 
+        <c:if test="${contactInfo != ''}">
+            <div class="alert alert-warning alert-dismissible fade show" id="fullInfo" role="alert">
+                <center>Вы получили информацию об авторе!</center> <br>
+                Блок: <strong>${blockId}</strong> <br>
+                Ссылка для связи: <strong>${contactInfo}</strong>
+            </div>
+        </c:if>
+
+        <input type="button" class='nav-link btn btn-outline-info' id="v-pills-settings-tab-2" value="Add" onClick='location.href="/addMarketNews"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+
     </div>
     <div class="tab-content" id="v-pills-tabContent">
         <!-- Тут отображение общих новостей -->
-        <div class="row row-cols-1 row-cols-md-2 g-${marketNews.size()}">
+        <div class="row row-cols-1 row-cols-md-2 g-${((marketNews.size() % 2) == 1 ? marketNews.size() + 1 : marketNews.size())}">
         <c:forEach var="el" items="${marketNews}" varStatus="сounter">
                 <div class="card">
                     <div>
-                    <img src="${сounter.count}.jpg" class="card-img-top" alt="${el.title}" align="middle">
-                        <div class="card" style="width: 16.225pc;">
+                    <img src="photos/${el.imageId}.jpg" class="card-img-top" alt="${el.title}" align="middle">
+                        <div class="card" style="width: 16.225pc;" id="table">
                             <div class="card-header">
-                                <a class="myclass3" href="/market/items/{${el.mark_id}}"> Посмотреть подробнее </a>
+
+                                <c:if test="${group_id == 0 || el.author == login}">
+                                    <a class="myclass3" href="/market/items/del/${el.mark_id}"> Удалить объявление </a>
+                                </c:if>
+                                <c:if test="${group_id != 0 && el.author != login}">
+                                    <a class="myclass3" href="/market/items/info/${el.mark_id}"> Посмотреть информацию </a>
+                                </c:if>
+
                             </div>
                             <ul class="list-group list-group-flush myclass4">
                                 <li class="list-group-item">${el.date_mark}</li>
