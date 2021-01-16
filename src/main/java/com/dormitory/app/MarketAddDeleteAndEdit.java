@@ -81,6 +81,4 @@ public class MarketAddDeleteAndEdit {
         session.setAttribute("blockId", arrayList.get(1));
         return "redirect:/market";
     }
-
-
 }

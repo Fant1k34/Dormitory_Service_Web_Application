@@ -30,6 +30,19 @@
         .d-flex align-items-start {
             width: 100pc !important;
         }
+        .first{
+            width:70%;
+            height:300px;
+            position:absolute;
+            border:1px solid red;
+        }
+        .second{
+            border:2px solid blue;
+            width:40%;
+            height:200px;
+            position: relative;
+            top: 315px;
+        }
     </style>
 </head>
 <body>
@@ -53,20 +66,13 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">${login}</a></li>
-                        <li><a class="dropdown-item" href="#">Сменить пароль</a></li>
-                        <li><a class="dropdown-item" href="#">МЕГА-подписка</a></li>
+                        <li><a class="dropdown-item" href="/changepassword">Сменить пароль</a></li>
+                        <li><a class="dropdown-item" href="/buy">МЕГА-подписка</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                        <li><a class="dropdown-item" href="/exit">Выход</a></li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
             </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
         </div>
     </div>
 </nav>
@@ -87,10 +93,17 @@
         </c:if>
 
         <c:if test="${toShow == 'Editing'}">
-            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-messages-tab" value="Удалить/изменить новость" onClick='location.href="/editсommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-messages-tab" value="Удалить/изменить новость" onClick='location.href="/editcommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
         <c:if test="${toShow != 'Editing'}">
-            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-messages-tab" value="Удалить/изменить новость" onClick='location.href="/editсommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-messages-tab" value="Удалить/изменить новость" onClick='location.href="/editcommon"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        </c:if>
+
+        <c:if test="${exception != null}">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Ошибка!</strong> ${exception}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         </c:if>
 
         </div>
@@ -160,6 +173,13 @@
                 </form:select>
                 <form:errors path="tagName"/>
 
+            <c:if test="${exception != null}">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Ошибка!</strong> - ${exception}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </c:if>
+
 
 
 <%--            <div class="input-group date" data-provide="datepicker">--%>
@@ -177,6 +197,88 @@
 
         </form:form>
     </c:if>
+<c:if test="${toShow == 'Editing'}">
+    <div class="alert alert-light" role="alert">
+    <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+    <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+    <form:form method="post" modelAttribute="editingAtt" action="/editcommon">
+
+
+        <form:select path="header2" class="form-select form-select-sm" aria-label=".form-select-sm example">
+            <c:forEach var="el" items="${allHeaders}">
+                <form:option value="${el}" itemLabel="name" itemValue="customerID"/>
+            </c:forEach>
+        </form:select>
+
+        <input type="submit" src="/editcommon" class="btn btn-primary" value="Выбрать">
+        </form:form>
+
+    </div>
+    <div class="alert alert-light" role="alert">
+    <form:form method="post" modelAttribute="editingAtt" action="/changecommon">
+        <c:if test="${chosen != null}">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                ${chosen.header}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Заголовок объявления</span>
+        <form:input path="header3" type="text" class="form-control" placeholder="А я заголовок. Не забудь про меня" aria-label="Username" aria-describedby="basic-addon1"/> <!-- bind to user.name-->
+        <form:errors path="header3"/>
+    </div>
+
+        <c:if test="${chosen != null}">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    ${chosen.usualText}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+    <div class="input-group mb-3">
+        <span class="input-group-text">Текст объявления</span>
+        <form:textarea path="usualText2" class="form-control" placeholder="Это текст объявления, я очень важен! Необходимо меня прочитать всем!" aria-label="With textarea"/> <!-- bind to user.name-->
+        <form:errors path="usualText2"/>
+    </div>
+
+        <c:if test="${chosen != null}">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    ${chosen.strongText}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon2">Выбор даты создания объявления</span>
+        <form:input path="strongText2" type="date" class="form-control"  aria-label="Recipient's username" aria-describedby="basic-addon2"/> <!-- bind to user.name-->
+        <form:errors path="strongText2"/>
+
+    </div>
+
+        <c:if test="${chosen != null}">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    ${chosen.tagName}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+    <form:select path="tagName2" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <form:option value="Важно" itemLabel="name" itemValue="customerID"/>
+        <form:option value="Стандартное" itemLabel="name" itemValue="customerID"/>
+    </form:select>
+    <form:errors path="tagName2"/>
+
+    <c:if test="${exception != null}">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Ошибка!</strong> - ${exception}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </c:if>
+
+        <input type="submit" src="/changecommon" class="btn btn-primary" value="Изменить">
+        </form:form>
+        <input type="submit" src="/changecommon" class="btn btn-primary" onClick='location.href="/deletecommon/${chosen.header}"' value="Удалить">
+    </div>
+</c:if>
 </div>
 </body>
 </html>

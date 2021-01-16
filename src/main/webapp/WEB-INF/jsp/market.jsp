@@ -154,20 +154,13 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">${login}</a></li>
-                        <li><a class="dropdown-item" href="#">Сменить пароль</a></li>
-                        <li><a class="dropdown-item" href="#">МЕГА-подписка</a></li>
+                        <li><a class="dropdown-item" href="/changepassword">Сменить пароль</a></li>
+                        <li><a class="dropdown-item" href="/buy">МЕГА-подписка</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Выход</a></li>
+                        <li><a class="dropdown-item" href="/exit">Выход</a></li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
             </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
         </div>
     </div>
 </nav>

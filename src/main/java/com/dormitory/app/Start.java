@@ -1,17 +1,20 @@
 package com.dormitory.app;
 
 import com.dormitory.app.database.Business;
-import com.dormitory.app.helpful.CommonNewsCreator;
-import com.dormitory.app.helpful.LoginAndPassword;
-import com.dormitory.app.helpful.PersonInfo;
-import com.dormitory.app.helpful.Tag;
+import com.dormitory.app.database.ServiceDatabase;
+import com.dormitory.app.helpful.*;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,8 +24,9 @@ import java.util.Collections;
 
 @Controller
 public class Start {
+    private MessageDigest digest;
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String indexG(Model model, HttpSession session) {
+    public String indexG(Model model, HttpSession session) throws ParseException {
         // Если пользователь не вошёл (нет сессии)
         if (session.getAttribute("login") == null){
             session.setAttribute("isLikeButtonActive", false);
@@ -44,9 +48,22 @@ public class Start {
         String log = (String) session.getAttribute("login");
         model.addAttribute("login", log);
 
-        // TODO Тут надо проверить, какая у него группа безопасности
+        if ((int) session.getAttribute("group_id") == 1){
 
+            SimpleDateFormat dateFormatNew = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cal1New = Calendar.getInstance();
+            cal1New.setTime(dateFormatNew.parse(Business.getGroupStartDateByLogin((String) session.getAttribute("login")).toString()));
+            cal1New.add(Calendar.DATE, Business.getGroupDuration((String) session.getAttribute("login")));
 
+            Calendar calNowNew = Calendar.getInstance();
+            calNowNew.setTime(dateFormatNew.parse(LocalDate.now().toString()));
+
+            if (!calNowNew.before(cal1New)) {
+                Business.changeGroupByLogin((String) session.getAttribute("login"));
+                session.invalidate();
+                return "redirect:/";
+            }
+        }
         // Отображем блоки
 
 
@@ -54,6 +71,10 @@ public class Start {
 
         int group_id = (int) session.getAttribute("group_id");
         addNewsCommonToModel(group_id, model);
+
+        if (((String) session.getAttribute("toShow")) == null){
+            return "start";
+        }
 
         model.addAttribute("toShow", (String) session.getAttribute("toShow"));
 
@@ -64,8 +85,22 @@ public class Start {
             model.addAttribute("addingAtt", new CommonNewsCreator());
         }
         if (((String) session.getAttribute("toShow")).equals("Editing")){
-            model.addAttribute("editingAtt", new CommonNewsCreator());
+            model.addAttribute("allHeaders", Business.getAllTitlesFromCommon());
+            if ((String) session.getAttribute("startValues") == null || ((String) session.getAttribute("startValues")).equals("")) {
+                model.addAttribute("editingAtt", new CommonNewsCreator2());
+            }
+            else {
+                CommonNewsCreator commonNewsCreator = Business.getTheCommonNewByTitle((String) session.getAttribute("startValues"));
+                session.setAttribute("chosen", commonNewsCreator.getHeader());
+                model.addAttribute("chosen", commonNewsCreator);
+                model.addAttribute("editingAtt", new CommonNewsCreator2());
+            }
+
         }
+        if ((String) session.getAttribute("exception") != null){
+            model.addAttribute("exception", (String) session.getAttribute("exception"));
+        }
+        session.setAttribute("exception", null);
 
         return "start";
     }
@@ -74,8 +109,8 @@ public class Start {
     // Это метод POST, который принимает @ModelAttribute произвольного класса, который заполняется
     // автоматически в форме, html код которой содержит поля этого класса
     // Все такие классы лежат в пакете helpful
-    public String indexP(Model model, HttpSession session, @ModelAttribute("toLogIn") LoginAndPassword loginAndPassword) throws IOException {
-        boolean successLogin = Business.checkLoginAndPassword(loginAndPassword.getLogin(), loginAndPassword.getPassw());
+    public String indexP(Model model, HttpSession session, @ModelAttribute("toLogIn") LoginAndPassword loginAndPassword) throws IOException, NoSuchAlgorithmException {
+        boolean successLogin = Business.checkLoginAndPassword(loginAndPassword.getLogin(), bytesToHex(MessageDigest.getInstance("SHA-256").digest((loginAndPassword.getPassw()).getBytes()))  );
         session.setMaxInactiveInterval(360);
         session.setAttribute("successLogin", successLogin);
         session.setAttribute("login", loginAndPassword.getLogin());
@@ -183,6 +218,38 @@ public class Start {
         filteredNews.addAll(news);
         model.addAttribute("commonNews", filteredNews);
         filteredNews.stream().map(i -> i.getTags()).forEach(System.out::println);
+    }
+
+    @GetMapping("/register")
+    public String doRegister(Model model, HttpSession session){
+        model.addAttribute("register", new RegistrationForm());
+        if (session.getAttribute("register") != null){
+            model.addAttribute("exception", (String) session.getAttribute("exception"));
+        }
+        
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String doRegisterPost(@ModelAttribute("register") RegistrationForm register, HttpSession session) throws NoSuchAlgorithmException {
+        if (!bytesToHex(MessageDigest.getInstance("SHA-256").digest((register.getLogin()).getBytes())).equals(register.getCode())){
+            session.setAttribute("exception", "Код неверный!");
+            return "redirect:/register";
+        }
+        ServiceDatabase.addToUser(register.getLogin(), bytesToHex(MessageDigest.getInstance("SHA-256").digest((register.getPassword()).getBytes())), 2, Date.valueOf(LocalDate.now().toString()), 999999999, register.getName(), register.getSurname(), register.getIsu_number(), register.getBlock_id());
+        return "redirect:/";
+    }
+
+
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuffer hexString = new StringBuffer();
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
 

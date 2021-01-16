@@ -8,6 +8,7 @@ import com.dormitory.app.helpful.PictureMarket;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -69,6 +70,151 @@ public class Business {
         }
         catch (Exception e){}
         return answer;
+    }
+
+    public static ArrayList<String> getAllTitlesFromCommon(){
+        ArrayList<String> allTitles = new ArrayList<>();
+        try{
+            Connection connection = SetConnection.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT title FROM CommonNews");
+            while (resultSet.next()){
+                allTitles.add(resultSet.getString(1));
+            }
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return allTitles;
+    }
+
+    public static CommonNewsCreator getTheCommonNewByTitle(String title){
+        CommonNewsCreator commonNewsCreator = new CommonNewsCreator();
+        try {
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM CommonNews WHERE title = ?");
+            statement.setString(1, title);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            commonNewsCreator.setHeader(resultSet.getString("title"));
+            commonNewsCreator.setUsualText(resultSet.getString("text"));
+            commonNewsCreator.setStrongText(resultSet.getDate("date").toString());
+            commonNewsCreator.setTagName(Business.getTagNameById(resultSet.getInt("tag_id")));
+        }
+        catch (Exception e){
+        }
+        return commonNewsCreator;
+    }
+
+    public static boolean updateDBCommonNewByTitle(String title, String titleNew, String text, String date, int tag_id){
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE CommonNews SET title = ?, text = ?, date = ?, tag_id = ? WHERE title = ?");
+            statement.setString(1, titleNew);
+            statement.setString(2, text);
+            statement.setDate(3, Date.valueOf(date));
+            statement.setInt(4, tag_id);
+            statement.setString(5, title);
+            statement.execute();
+            statement.close();
+            connection.close();
+            return true;
+        }
+        catch (Exception e){
+        }
+        return false;
+    }
+
+    public static boolean updatePassword(String prevPassword, String newPassword){
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE User SET passw = ? WHERE passw = ?");
+            statement.setString(1, newPassword);
+            statement.setString(2, prevPassword);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return true;
+    }
+
+    public static int getGroupDuration(String login){
+        int answer = 2;
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT group_duration FROM User WHERE login = ?");
+            statement.setString(1, login);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            answer = resultSet.getInt(1);
+        }
+        catch (Exception e){
+        }
+        return answer;
+    }
+
+    public static Date getGroupStartDateByLogin(String login){
+        Date answer = Date.valueOf(LocalDate.now().toString());
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT group_date FROM User WHERE login = ?");
+            statement.setString(1, login);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            answer = resultSet.getDate(1);
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return answer;
+    }
+
+    public static void changeGroupByLogin(String login){
+        try {
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE User SET group_id = 2, group_duration = 9999999 WHERE login = ?");
+            statement.setString(1, login);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateUserGroupCodeByLogin(String login){
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE User SET group_id = ?, group_duration = 2 WHERE login = ?");
+            statement.setInt(1, 1);
+            statement.setString(2, login);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+    }
+
+    public static boolean deleteCommonNewsByTitle(String title){
+        boolean returnBool = true;
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM CommonNews WHERE title = ?");
+            statement.setString(1, title);
+            statement.execute();
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+            returnBool = false;
+        }
+        return returnBool;
     }
 
     public static ArrayList<PersonInfo> putAllInfoToPeopleInfo(){
@@ -347,6 +493,23 @@ public class Business {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             answer = resultSet.getInt(1);
+            statement.close();
+            connection.close();
+        }
+        catch (Exception e){
+        }
+        return answer;
+    }
+
+    public static String getTagNameById(int id){
+        String answer = "";
+        try{
+            Connection connection = SetConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT tag_text FROM Tag WHERE tag_id = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            answer = resultSet.getString(1);
             statement.close();
             connection.close();
         }

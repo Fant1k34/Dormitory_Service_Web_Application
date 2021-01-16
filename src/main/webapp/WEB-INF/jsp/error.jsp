@@ -18,6 +18,7 @@
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
       <strong>ОШИБКА: </strong> ${error}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <a href="/">Перезайдите в сервис</a>
   </div>
 
 

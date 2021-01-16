@@ -24,56 +24,59 @@ public class Market {
     @RequestMapping(value = "/market", method = RequestMethod.GET)
     public String marketPage(Model model, @RequestParam(value = "sort", defaultValue = "rating") String sort,
                              HttpSession session){
-        if (session.getAttribute("login") == null){
-            session.setAttribute("isLikeButtonActive", false);
-            session.setAttribute("search", "");
-            // model.addAttribute("search", new FindProperly(""));
-            return "redirect:/";
-        }
-        String login = (String) session.getAttribute("login");
-        boolean liked = (boolean) session.getAttribute("isLikeButtonActive");
+        try {
+            if (session.getAttribute("login") == null) {
+                session.setAttribute("isLikeButtonActive", false);
+                session.setAttribute("search", "");
+                // model.addAttribute("search", new FindProperly(""));
+                return "redirect:/";
+            }
+            String login = (String) session.getAttribute("login");
+            boolean liked = (boolean) session.getAttribute("isLikeButtonActive");
 
-        if (sort.equals("date")) {
-            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.DATE, login, liked, (String) session.getAttribute("search")));
-        }
-        if (sort.equals("name")) {
-            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.NAME, login, liked, (String) session.getAttribute("search")));
-        }
-        if (sort.equals("rating")) {
-            model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.RATING, login, liked, (String) session.getAttribute("search")));
-        }
+            if (sort.equals("date")) {
+                model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.DATE, login, liked, (String) session.getAttribute("search")));
+            }
+            if (sort.equals("name")) {
+                model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.NAME, login, liked, (String) session.getAttribute("search")));
+            }
+            if (sort.equals("rating")) {
+                model.addAttribute("marketNews", putAllNewsToModel(SortFlagForMarket.RATING, login, liked, (String) session.getAttribute("search")));
+            }
 
-        model.addAttribute("sortType", sort);
+            model.addAttribute("sortType", sort);
 
-        if (liked){
-            model.addAttribute("isLikeButtonActive", true);
-        }
-        else {
-            model.addAttribute("isLikeButtonActive", false);
-        }
+            if (liked) {
+                model.addAttribute("isLikeButtonActive", true);
+            } else {
+                model.addAttribute("isLikeButtonActive", false);
+            }
 
-        if (session.getAttribute("contactInfo") == null){
-            model.addAttribute("contactInfo", "");
-            model.addAttribute("blockId", "");
-        }
-        else {
-            String s1 = (String) session.getAttribute("contactInfo");
-            String s2 = (String) session.getAttribute("blockId");
-            System.out.println(s1);
-            System.out.println(s2);
-            model.addAttribute("contactInfo", s1);
-            model.addAttribute("blockId", s2);
-            // Обнуляем данные два аттрибута сессии
-            session.setAttribute("contactInfo", null);
-            session.setAttribute("blockId", null);
+            if (session.getAttribute("contactInfo") == null) {
+                model.addAttribute("contactInfo", "");
+                model.addAttribute("blockId", "");
+            } else {
+                String s1 = (String) session.getAttribute("contactInfo");
+                String s2 = (String) session.getAttribute("blockId");
+                System.out.println(s1);
+                System.out.println(s2);
+                model.addAttribute("contactInfo", s1);
+                model.addAttribute("blockId", s2);
+                // Обнуляем данные два аттрибута сессии
+                session.setAttribute("contactInfo", null);
+                session.setAttribute("blockId", null);
 
-        }
+            }
 
-        model.addAttribute("group_id", (int) session.getAttribute("group_id"));
-        model.addAttribute("login", (String) session.getAttribute("login"));
-        model.addAttribute("prevSearch", (String) session.getAttribute("search"));
-        model.addAttribute("search", new FindProperly());
-        return "market";
+            model.addAttribute("group_id", (int) session.getAttribute("group_id"));
+            model.addAttribute("login", (String) session.getAttribute("login"));
+            model.addAttribute("prevSearch", (String) session.getAttribute("search"));
+            model.addAttribute("search", new FindProperly());
+            return "market";
+        }
+        catch (Exception e){
+        }
+        return "redirect:/";
     }
 
     public static ArrayList<MarketNewsCreator> putAllNewsToModel(SortFlagForMarket sortFlagForMarket, String login, boolean sortByLiked, String word){
