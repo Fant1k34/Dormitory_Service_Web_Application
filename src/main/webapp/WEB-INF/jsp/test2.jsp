@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Управление</title>
 </head>
 <body>
 <img src="photos/${allImages.get(0).name}.jpg" alt="((((((((((((((" />

@@ -33,13 +33,6 @@ import java.util.ArrayList;
 
 @Controller
 public class MarketStuff {
-    @RequestMapping(value = "/market/items/s/{id}")
-    public String marketItemSet(@PathVariable("id") String id){
-
-        return "saveImageHtml";
-    }
-
-
     @RequestMapping(value = "/market/items/g/{id}")
     public ModelAndView marketItemGet(@PathVariable("id") String id,
                                       Model model,
@@ -62,12 +55,6 @@ public class MarketStuff {
         modelAndView.addObject("pictures", allPicturesFromDBById);
         return modelAndView;
     }
-
-    @RequestMapping(value = "/market/items/get")
-    public String helpToMarketToGetItem(Model model){
-        return "test2";
-    }
-
 
 
     @RequestMapping(value = "/uploadImage")
@@ -107,17 +94,6 @@ public class MarketStuff {
     }
 
 
-    @RequestMapping(value = "/market/items/show/{id}", method = RequestMethod.GET)
-    public String getImageAsResponseEntity(Model model, HttpSession session, @PathVariable("id") int id) throws IOException {
-        // model.addAttribute("imagePath1", "KK4Oq2VMtGQ.jpg");
-        model.addAttribute("pictureId", id);
-
-        ArrayList<PictureMarket> allPicturesFromDBById = Business.getAllPicturesFromDBById(id);
-        model.addAttribute("allImages", allPicturesFromDBById);
-
-        return "test2";
-    }
-
     @RequestMapping(value = "/service")
     public String service(HttpSession session){
         if (session.getAttribute("login") == null){
@@ -149,38 +125,10 @@ public class MarketStuff {
 //        return responseEntity;
 //    }
 
-    @GetMapping(value = "/classpath")
-    public ResponseEntity<byte[]> fromClasspathAsResEntity() throws IOException {
-
-        ClassPathResource imageFile = new ClassPathResource("/WEB-INF/images/0.jpg");
-
-        byte[] imageBytes = Business.getPictureFromDBByIdPicture(1610148928).getBytes();
-
-        InputStream in = new ByteArrayInputStream(imageBytes);
-
-        BufferedImage buf = ImageIO.read(in);
-        int height = buf.getHeight();
-        int width = buf.getWidth();
-
+    @GetMapping(value = "/classpath/{id}")
+    public ResponseEntity<byte[]> fromDBAsResEntity(@PathVariable("id") String id) throws IOException {
+        byte[] imageBytes = Business.getPictureFromDBByIdPicture(Integer.parseInt(id)).getBytes();
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
     }
 
-    @GetMapping(value = "/classpath/new")
-    public String newBean(Model model) throws IOException {
-
-        ClassPathResource imageFile = new ClassPathResource("/WEB-INF/images/0.jpg");
-
-        byte[] imageBytes = Business.getPictureFromDBByIdPicture(1610148928).getBytes();
-
-        InputStream in = new ByteArrayInputStream(imageBytes);
-
-        BufferedImage buf = ImageIO.read(in);
-        int height = buf.getHeight();
-        int width = buf.getWidth();
-
-        model.addAttribute("width", width);
-        model.addAttribute("height", height);
-        model.addAttribute("bytes", imageBytes);
-        return "test4";
-    }
 }

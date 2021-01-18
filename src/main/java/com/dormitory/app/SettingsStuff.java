@@ -56,6 +56,7 @@ public class SettingsStuff {
             return "redirect:/";
         }
         Business.updateUserGroupCodeByLogin((String) session.getAttribute("login"));
+        session.invalidate();
         return "redirect:/";
     }
 

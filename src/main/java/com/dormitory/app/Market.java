@@ -72,6 +72,12 @@ public class Market {
             model.addAttribute("login", (String) session.getAttribute("login"));
             model.addAttribute("prevSearch", (String) session.getAttribute("search"));
             model.addAttribute("search", new FindProperly());
+
+            if ((int) session.getAttribute("group_id") == 2){
+                session.setAttribute("exception", "Получите МЕГА-версию, чтобы не ждать");
+                model.addAttribute("exception", (String) session.getAttribute("exception"));
+                session.setAttribute("exception", null);
+            }
             return "market";
         }
         catch (Exception e){
@@ -169,17 +175,5 @@ public class Market {
         System.out.println(findProperly.getSubsequence());
         session.setAttribute("search", findProperly.getSubsequence());
         return "redirect:/market";
-    }
-
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String test(Model model, HttpSession session) {
-        model.addAttribute("search", new FindProperly());
-        return "test3";
-    }
-
-    @RequestMapping(value = "test", method = RequestMethod.POST)
-    public String test2(@ModelAttribute("search") FindProperly findProperly, BindingResult result, Model model){
-        System.out.println(findProperly.getSubsequence());
-        return "test3";
     }
 }

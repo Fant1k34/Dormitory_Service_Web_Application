@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Управление</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <style>
         .navbar-nav {
@@ -79,7 +79,7 @@
 <div class="d-flex align-items-start">
     <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 
-        <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-home-tab" value="Смена пароля" role="tab" aria-controls="v-pills-home" aria-selected="false">
+        <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-home-tab" value="Получение МЕГА" role="tab" aria-controls="v-pills-home" aria-selected="false">
 
         <c:if test="${exception != null}">
             <div class="alert alert-warning alert-dismissible fade show" role="alert">

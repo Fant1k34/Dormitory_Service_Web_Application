@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Управление</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <style>
         .navbar-nav {
@@ -211,10 +211,16 @@
         </c:if>
 
         <c:if test="${contactInfo != ''}">
-            <div class="alert alert-warning alert-dismissible fade show" id="fullInfo" role="alert">
+            <div class="alert alert-warning alert-dismissible fade show" id="fullInfo1" role="alert">
                 <center>Вы получили информацию об авторе!</center> <br>
                 Блок: <strong>${blockId}</strong> <br>
                 Ссылка для связи: <strong>${contactInfo}</strong>
+            </div>
+        </c:if>
+
+        <c:if test="${!(exception == null || exception == '')}">
+            <div class="alert alert-warning alert-dismissible fade show" id="fullInfo2" role="alert">
+                <strong>${exception}</strong> <br>
             </div>
         </c:if>
 
@@ -258,6 +264,7 @@
                                         Удалить из избранного
                                     </c:if>
                                 </li>
+                                <li class="list-group-item"> <a href="/classpath/${el.imageId}"> Посмотреть изображение</a> </li>
                             </ul>
                         </div>
                     </div>

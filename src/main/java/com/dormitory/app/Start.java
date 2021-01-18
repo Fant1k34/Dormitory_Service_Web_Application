@@ -234,9 +234,11 @@ public class Start {
     public String doRegisterPost(@ModelAttribute("register") RegistrationForm register, HttpSession session) throws NoSuchAlgorithmException {
         if (!bytesToHex(MessageDigest.getInstance("SHA-256").digest((register.getLogin()).getBytes())).equals(register.getCode())){
             session.setAttribute("exception", "Код неверный!");
-            return "redirect:/register";
+            session.invalidate();
+            return "redirect:/";
         }
         ServiceDatabase.addToUser(register.getLogin(), bytesToHex(MessageDigest.getInstance("SHA-256").digest((register.getPassword()).getBytes())), 2, Date.valueOf(LocalDate.now().toString()), 999999999, register.getName(), register.getSurname(), register.getIsu_number(), register.getBlock_id());
+        session.invalidate();
         return "redirect:/";
     }
 

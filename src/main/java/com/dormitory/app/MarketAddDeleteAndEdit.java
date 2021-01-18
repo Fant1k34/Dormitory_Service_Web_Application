@@ -2,6 +2,7 @@ package com.dormitory.app;
 
 import com.dormitory.app.database.Business;
 import com.dormitory.app.database.InsertData;
+import com.dormitory.app.helpful.CommonNewsCreator;
 import com.dormitory.app.helpful.MarketNewsCreator;
 import com.dormitory.app.helpful.MarketSimpleFromFormGetter;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 @Controller
 public class MarketAddDeleteAndEdit {
     @RequestMapping(value = "/addMarketNews", method = RequestMethod.GET)
-    public String addMarket(Model model, @RequestParam(value = "pictureId", defaultValue = "") String pictureId, HttpSession session){
+    public String addMarket(Model model, @RequestParam(value = "pictureId", defaultValue = "") String pictureId, HttpSession session) throws InterruptedException {
         if (session.getAttribute("login") == null){
             return "redirect:/";
         }
@@ -32,12 +33,22 @@ public class MarketAddDeleteAndEdit {
             }
         }
         model.addAttribute("makeMarketNew", new MarketSimpleFromFormGetter());
+
+        if ((int) session.getAttribute("group_id") == 2){
+            session.setAttribute("exception", "Получите МЕГА-версию, чтобы не ждать");
+            model.addAttribute("exception", (String) session.getAttribute("exception"));
+            session.setAttribute("exception", null);
+            Thread.sleep(7000);
+        }
+
         return "addmarket";
     }
 
 
     @RequestMapping(value = "/addMarketNews", method = RequestMethod.POST)
     public String addMarketPost(Model model, @ModelAttribute("makeMarketNew") MarketSimpleFromFormGetter marketSimpleFromFormGetter, HttpSession session) throws InterruptedException {
+        String id = "";
+        try{
         if (session.getAttribute("login") == null){
             return "redirect:/";
         }
@@ -51,12 +62,16 @@ public class MarketAddDeleteAndEdit {
         marketNewsCreator.setContact_info(marketSimpleFromFormGetter.getContactInfoForMarketSimpleFromFormGetter());
         marketNewsCreator.setTag_id_mark(3);
 
-        String id = InsertData.insertToMarket(marketNewsCreator);
+        id = InsertData.insertToMarket(marketNewsCreator);
 
         // Кладу в БД правильное id объявления с правильным id картинки
         InsertData.putPictureToDBRelatedToNewById(Integer.parseInt(marketSimpleFromFormGetter.getImageNameForMarketSimpleFromFormGetter()), Integer.parseInt(id), Business.getPictureFromDBByIdPicture(Integer.parseInt(marketSimpleFromFormGetter.getImageNameForMarketSimpleFromFormGetter())).getBytes());
 
         return "redirect:/market";
+        }
+        catch (Exception e){
+            return "redirect:/market/items/del/" + id;
+        }
     }
 
     @RequestMapping("/market/items/del/{id}")
@@ -72,9 +87,13 @@ public class MarketAddDeleteAndEdit {
 
 
     @RequestMapping("/market/items/info/{id}")
-    public String showInfo(@PathVariable("id") String id, HttpSession session){
+    public String showInfo(@PathVariable("id") String id, HttpSession session) throws InterruptedException {
         if (session.getAttribute("login") == null){
             return "redirect:/";
+        }
+        if ((int) session.getAttribute("group_id") == 2){
+            session.setAttribute("exception", "Получите МЕГА-версию, чтобы не ждать");
+            Thread.sleep(7000);
         }
         ArrayList<String> arrayList = Business.showAuthorInfoByMarkId(Integer.parseInt(id));
         session.setAttribute("contactInfo", arrayList.get(0));
