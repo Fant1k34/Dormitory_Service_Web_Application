@@ -167,31 +167,31 @@
 <div class="d-flex align-items-start">
     <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         <c:if test="${sortType == 'rating'}">
-            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-home-tab" value="Rating" onClick='location.href="/sortByRating"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-home-tab" value="Рейтинг" onClick='location.href="/sortByRating"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
         <c:if test="${sortType != 'rating'}">
-            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-home-tab" value="Rating" onClick='location.href="/sortByRating"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-home-tab" value="Рейтинг" onClick='location.href="/sortByRating"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
 
         <c:if test="${sortType == 'date'}">
-            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-profile-tab" value="Date" onClick='location.href="/sortByDate"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-profile-tab" value="Дата" onClick='location.href="/sortByDate"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
         <c:if test="${sortType != 'date'}">
-            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-profile-tab" value="Date" onClick='location.href="/sortByDate"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-profile-tab" value="Дата" onClick='location.href="/sortByDate"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
 
         <c:if test="${sortType == 'name'}">
-            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-messages-tab" value="Name" onClick='location.href="/sortByName"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-primary' id="v-pills-messages-tab" value="Заголовок" onClick='location.href="/sortByName"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
         <c:if test="${sortType != 'name'}">
-            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-messages-tab" value="Name" onClick='location.href="/sortByName"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-messages-tab" value="Заголовок" onClick='location.href="/sortByName"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
 
         <c:if test="${isLikeButtonActive}">
-            <input type="button" class='nav-link btn btn-outline-primary active' id="v-pills-settings-tab" value="Liked" onClick='location.href="/sortByLiked"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-primary active' id="v-pills-settings-tab" value="Избранное" onClick='location.href="/sortByLiked"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
         <c:if test="${isLikeButtonActive == false}">
-            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-settings-tab" value="Liked" onClick='location.href="/sortByLiked"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+            <input type="button" class='nav-link btn btn-outline-secondary' id="v-pills-settings-tab" value="Избранное" onClick='location.href="/sortByLiked"' role="tab" aria-controls="v-pills-home" aria-selected="false">
         </c:if>
 
         <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -200,7 +200,7 @@
         <form:form method="post" modelAttribute="search" action="/market" class="d-flex">
             <form:input class="form-control me-2" placeholder="Search" aria-label="Search" path="subsequence" type="search"/> <!-- bind to search.subsequence-->
             <form:errors path="subsequence"/>
-            <button class="btn btn-outline-success" type="submit">Search</button>
+            <button class="btn btn-outline-success" type="submit">Поиск</button>
         </form:form>
 
         <c:if test="${prevSearch != ''}">
@@ -224,7 +224,7 @@
             </div>
         </c:if>
 
-        <input type="button" class='nav-link btn btn-outline-info' id="v-pills-settings-tab-2" value="Add" onClick='location.href="/addMarketNews"' role="tab" aria-controls="v-pills-home" aria-selected="false">
+        <input type="button" class='nav-link btn btn-outline-info' id="v-pills-settings-tab-2" value="Добавить объявление" onClick='location.href="/addMarketNews"' role="tab" aria-controls="v-pills-home" aria-selected="false">
 
     </div>
     <div class="tab-content" id="v-pills-tabContent">

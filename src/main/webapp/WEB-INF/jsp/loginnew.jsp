@@ -302,11 +302,11 @@
             <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
             <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
             <form:form method="post" modelAttribute="toLogIn" action="/">
-                <form:input path="login" type="text" id="login" class="fadeIn second" name="login" placeholder="login"/> <!-- bind to user.name-->
+                <form:input path="login" type="text" id="login" class="fadeIn second" name="login" placeholder="mylogin"/> <!-- bind to user.name-->
                 <form:errors path="login"/>
-                <form:input path="passw" id="password" class="fadeIn third" name="login" placeholder="password"/> <!-- bind to user.name-->
+                <form:input path="passw" id="password" class="fadeIn third" name="login" placeholder="mypassword"/> <!-- bind to user.name-->
                 <form:errors path="passw"/>
-                <input type="submit" class="fadeIn fourth" value="Log In">
+                <input type="submit" class="fadeIn fourth" value="Войти">
             </form:form>
 
             <!-- Remind Passowrd -->
