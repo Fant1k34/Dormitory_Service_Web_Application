@@ -1,5 +1,9 @@
 # Управление общежитием
 
+Проект разработан для курса Веб-программирования в ИТМО
+
+Пояснительная записка - [Ссылка](https://drive.google.com/drive/folders/19vN_E7TtvkZ-RJKuRCO1equ_N3rLdOr3)
+
 ## Дукин Никита P3221
 
 Сервис разработан на Spring Boot (Java) + JSTL + MySQL
