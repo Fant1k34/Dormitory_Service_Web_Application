@@ -10,11 +10,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static com.dormitory.app.Start.bytesToHex;
 
 @Controller
 public class SettingsStuff {
     @RequestMapping(value = "/changepassword", method = RequestMethod.GET)
     public String changePassword(HttpSession session, Model model){
+        if (session.getAttribute("login") == null){
+            return "redirect:/";
+        }
         if (session.getAttribute("exception") != null) {
             model.addAttribute("exception", session.getAttribute("exception"));
             session.setAttribute("exception", null);
@@ -24,16 +31,23 @@ public class SettingsStuff {
     }
 
     @RequestMapping(value = "/changepassword", method = RequestMethod.POST)
-    public String changePasswordPost(HttpSession session, @ModelAttribute("password") PasswordChanger password){
-        if (!Business.checkLoginAndPassword((String) session.getAttribute("login"), password.getPrevPass())){
+    public String changePasswordPost(HttpSession session, @ModelAttribute("password") PasswordChanger password) throws NoSuchAlgorithmException {
+        if (session.getAttribute("login") == null){
+            return "redirect:/";
+        }
+        if (!Business.checkLoginAndPassword((String) session.getAttribute("login"), bytesToHex(MessageDigest.getInstance("SHA-256").digest((password.getPrevPass()).getBytes())))){
             session.setAttribute("exception", "Пароль неверный!");
+            return "redirect:/changepassword";
+        }
+        if (password.getNewPass1().length() < 8 || password.getNewPass1().length() > 21){
+            session.setAttribute("exception", "Неверная длина пароля!");
             return "redirect:/changepassword";
         }
         if (!password.getNewPass1().equals(password.getNewPass2())){
             session.setAttribute("exception", "Новые пароли не совпадают");
             return "redirect:/changepassword";
         }
-        Business.updatePassword(password.getPrevPass(), password.getNewPass1());
+        Business.updatePassword(bytesToHex(MessageDigest.getInstance("SHA-256").digest((password.getPrevPass()).getBytes())), bytesToHex(MessageDigest.getInstance("SHA-256").digest((password.getNewPass1()).getBytes())));
         return "redirect:/";
     }
 
@@ -46,12 +60,18 @@ public class SettingsStuff {
     }
 
     @RequestMapping(value = "/buy", method = RequestMethod.GET)
-    public String buy(){
+    public String buy(HttpSession session){
+        if (session.getAttribute("login") == null){
+            return "redirect:/";
+        }
         return "buy";
     }
 
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
     public String buyPost(HttpSession session){
+        if (session.getAttribute("login") == null){
+            return "redirect:/";
+        }
         if ((int) session.getAttribute("group_id") == 0 || (int) session.getAttribute("group_id") == 1) {
             return "redirect:/";
         }

@@ -1,0 +1,8 @@
+personal202108_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.eu-amsterdam-1.oraclecloud.com))(connect_data=(service_name=g96b99882f2a449_personal202108_high.adb.oraclecloud.com))(security=(ssl_server_cert_dn="CN=adb.eu-amsterdam-1.oraclecloud.com, OU=Oracle ADB AMSTERDAM, O=Oracle Corporation, L=Redwood City, ST=California, C=US")))
+
+personal202108_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.eu-amsterdam-1.oraclecloud.com))(connect_data=(service_name=g96b99882f2a449_personal202108_low.adb.oraclecloud.com))(security=(ssl_server_cert_dn="CN=adb.eu-amsterdam-1.oraclecloud.com, OU=Oracle ADB AMSTERDAM, O=Oracle Corporation, L=Redwood City, ST=California, C=US")))
+
+personal202108_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.eu-amsterdam-1.oraclecloud.com))(connect_data=(service_name=g96b99882f2a449_personal202108_medium.adb.oraclecloud.com))(security=(ssl_server_cert_dn="CN=adb.eu-amsterdam-1.oraclecloud.com, OU=Oracle ADB AMSTERDAM, O=Oracle Corporation, L=Redwood City, ST=California, C=US")))
+
+
+

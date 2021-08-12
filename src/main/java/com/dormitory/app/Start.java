@@ -244,7 +244,7 @@ public class Start {
 
 
 
-    private static String bytesToHex(byte[] hash) {
+    static String bytesToHex(byte[] hash) {
         StringBuffer hexString = new StringBuffer();
         for (int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);

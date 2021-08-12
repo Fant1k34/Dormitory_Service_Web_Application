@@ -6,6 +6,8 @@ import org.hsqldb.jdbc.JDBCDriver;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class InsertData {
     public static void insertToCommonNews(String title, String text, int author_id, LocalDate date, int tag_id){
@@ -153,6 +155,18 @@ public class InsertData {
 
 
     public static void main(String[] args) {
+        ServiceDatabase.create("User");
+        ServiceDatabase.create("Permission");
+        ServiceDatabase.create("CommonNews");
+        ServiceDatabase.create("MarketNews");
+        ServiceDatabase.create("PinnedMessage");
+        ServiceDatabase.create("PictureCommon");
+        ServiceDatabase.create("Color");
+        ServiceDatabase.create("Liked");
+
+        Calendar calendar = new GregorianCalendar(2021, 7 , 11);
+
+        ServiceDatabase.addToUser("Fant1k43", "123456", 0, calendar.getTime(), 99999999, "Никита", "Дукин", 284744, "803б");
         // InsertData.insertToCommonNews();
         // InsertData.insertToTag(4, "Услуга");
         // InsertData.insertToMarket("Печатаю лабы", "Две лабы печатаю - третья в подарок* <br> * - Третья лабораторная - самая короткая", 1, LocalDate.of(2020, 12, 6), "803б", 14, 4);
